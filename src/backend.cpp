@@ -28,6 +28,7 @@ Backend::Backend(FilePicker *filePicker, const QString &cacheDirectory, QObject 
         m_warning = result.warning;
         m_error.clear();
         emit meshChanged();
+        emit storeysChanged();
         emit storeyLimitChanged();
         emit sectionChanged();
         setState(Ready);
@@ -315,6 +316,17 @@ void Backend::clearSelection() {
     m_selected = -1;
     m_selection.clear();
     emit selectionChanged();
+}
+
+void Backend::retranslate() {
+    if (!m_mesh)
+        return;
+    // The list and the storey names hold text made when the model opened.
+    // Resetting the list drops the states it holds, so they go back in too.
+    describeElements();
+    updateVisibility();
+    emit storeysChanged();
+    refreshSelection();
 }
 
 void Backend::refreshSelection() {

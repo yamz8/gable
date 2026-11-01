@@ -9,6 +9,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMap>
+#include <QSaveFile>
 #include <cstdio>
 
 #include "ifcinfo.h"
@@ -234,10 +235,11 @@ int skill(const QStringList &arguments) {
     const QString directory = home.filePath(".agents/skills/keystone");
     if (!QDir().mkpath(directory))
         return fail("Could not create " + directory);
-    QFile target(directory + "/SKILL.md");
-    if (!target.open(QIODevice::WriteOnly | QIODevice::Truncate) || target.write(text) != text.size())
+    // Written beside the old copy and renamed over it, so a failure leaves
+    // that copy whole.
+    QSaveFile target(directory + "/SKILL.md");
+    if (!target.open(QIODevice::WriteOnly) || target.write(text) != text.size() || !target.commit())
         return fail("Could not write " + target.fileName());
-    target.close();
     const QString link = home.filePath(".claude/skills/keystone");
     if (!QFileInfo(link).exists() && !QFileInfo(link).isSymLink()) {
         if (!home.mkpath(".claude/skills") || !QFile::link("../../.agents/skills/keystone", link))
@@ -250,8 +252,10 @@ int skill(const QStringList &arguments) {
 }
 
 bool isCliCommand(const char *word) {
-    return QStringList{"info", "elements", "properties", "skill", "help", "--help", "-h", "--version", "-v"}
-        .contains(QString::fromUtf8(word));
+    // Only open, or something that is or names a model, reaches the window.
+    const QString argument = QString::fromLocal8Bit(word);
+    return argument != "open" && !argument.endsWith(".ifc", Qt::CaseInsensitive)
+        && !argument.startsWith("file:") && !QFileInfo(argument).isFile();
 }
 
 int runCli(const QStringList &arguments) {
@@ -268,6 +272,9 @@ int runCli(const QStringList &arguments) {
         return properties(arguments);
     if (command == "skill")
         return skill(arguments);
-    print(usage());
-    return 0;
+    if (command.isEmpty() || command == "help" || command == "--help" || command == "-h") {
+        print(usage());
+        return 0;
+    }
+    return fail(QString("Unknown command %1. Run keystone help to see the commands.").arg(command));
 }

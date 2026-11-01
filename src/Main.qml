@@ -197,9 +197,8 @@ ApplicationWindow {
             anchors.bottomMargin: 12
             anchors.horizontalCenter: parent.horizontalCenter
             visible: win.hasModel
-            // Kept clear of the side panels when the window is narrow.
+            // A narrow window wraps it rather than cutting it off.
             width: Math.min(implicitWidth, parent.width - 24)
-            clip: true
         }
 
         PropertiesPanel {
