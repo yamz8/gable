@@ -17,6 +17,8 @@
 int main(int argc, char *argv[]) {
     // Commands draw no window, so they need no display: bare keystone prints
     // help, as a command line tool should, and the launcher says keystone open.
+    // Anything that isn't a model counts as a command, so a typo gets an error
+    // rather than a window.
     if (argc == 1 || isCliCommand(argv[1])) {
         QCoreApplication app(argc, argv);
         app.setApplicationName("keystone");
@@ -42,7 +44,7 @@ int main(int argc, char *argv[]) {
 
     Theme theme;
     Backend backend;
-    QObject::connect(&translator, &Translator::changed, &backend, &Backend::refreshSelection);
+    QObject::connect(&translator, &Translator::changed, &backend, &Backend::retranslate);
 
     qmlRegisterType<MeshGeometry>("Keystone", 1, 0, "MeshGeometry");
     qmlRegisterUncreatableType<Backend>("Keystone", 1, 0, "Backend", "Backend is provided as `backend`");

@@ -42,7 +42,7 @@ class Backend : public QObject {
     Q_PROPERTY(ElementList *elements READ elements CONSTANT)
     // The storeys, lowest first, and how many of them are shown: the storey
     // slider peels the top ones away; storeyLimit equal to the count shows all.
-    Q_PROPERTY(QStringList storeys READ storeys NOTIFY meshChanged)
+    Q_PROPERTY(QStringList storeys READ storeys NOTIFY storeysChanged)
     Q_PROPERTY(int storeyLimit READ storeyLimit WRITE setStoreyLimit NOTIFY storeyLimitChanged)
     // X-ray: everything (All), or one discipline drawn with the rest ghosted.
     Q_PROPERTY(XRay xray READ xray WRITE setXray NOTIFY xrayChanged)
@@ -129,6 +129,9 @@ public:
     Q_INVOKABLE QVariant hitPoint(const QVector3D &near, const QVector3D &far) const;
     // Formats the selection again, after a language switch.
     Q_INVOKABLE void refreshSelection();
+    // Everything already formatted for the screen again, after a language
+    // switch, leaving the geometry and the camera alone.
+    Q_INVOKABLE void retranslate();
     // One step through the X-ray modes and section axes, for their keys.
     Q_INVOKABLE void cycleXray();
     Q_INVOKABLE void cycleSection();
@@ -136,6 +139,7 @@ public:
 signals:
     void stateChanged();
     void meshChanged();
+    void storeysChanged();
     void selectionChanged();
     void loadProgressChanged();
     // Something to tell the user that doesn't replace what's on screen: an

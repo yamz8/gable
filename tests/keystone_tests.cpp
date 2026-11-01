@@ -564,6 +564,49 @@ END-ISO-10303-21;
         qunsetenv("KEYSTONE_IFCCONVERT");
     }
 
+    void backendFollowsALanguageSwitch() {
+        QTemporaryDir dir;
+        write(dir.filePath("wall.ifc"), sampleIfc);
+        const QString fake = writeFakeIfcConvert(dir);
+        // One element IFC says nothing about, so it's in no storey.
+        write(dir.filePath("fixture.obj"), cubeObj("model.mtl") + "g 1NotInTheModel000000000\nusemtl grey\nf 1 2 3\n");
+        qputenv("KEYSTONE_IFCCONVERT", fake.toUtf8());
+        write(dir.filePath("language"), "en");
+        write(dir.filePath("de.json"), R"({"Not in a storey": "Keinem Geschoss zugeordnet"})");
+
+        const QLocale savedLocale;
+        Translator translator(dir.filePath("language"), dir.path());
+        QCoreApplication::installTranslator(&translator);
+        Backend backend(new FakePicker(), dir.filePath("cache"));
+        connect(&translator, &Translator::changed, &backend, &Backend::retranslate);
+        QVERIFY(backend.openPath(dir.filePath("wall.ifc")));
+        QTRY_COMPARE(backend.state(), Backend::Ready);
+
+        ElementList *list = backend.elements();
+        const auto storeyOfLastRow = [list] {
+            return list->data(list->index(list->rowCount() - 1), ElementList::StoreyRole).toString();
+        };
+        QCOMPARE(storeyOfLastRow(), QString("Not in a storey"));
+        backend.setStoreyLimit(1);
+        const QVector<quint8> visibility = backend.visibility();
+        QSignalSpy geometry(&backend, &Backend::meshChanged);
+        QSignalSpy storeys(&backend, &Backend::storeysChanged);
+
+        write(dir.filePath("language"), "de");
+        QTRY_COMPARE(storeyOfLastRow(), QString("Keinem Geschoss zugeordnet"));
+
+        // Text only: the view keeps its geometry and what's peeled away.
+        QCOMPARE(geometry.count(), 0);
+        QCOMPARE(storeys.count(), 1);
+        QCOMPARE(backend.storeyLimit(), 1);
+        QCOMPARE(backend.visibility(), visibility);
+        QCOMPARE(list->data(list->index(0), ElementList::ShownRole).toInt(), int(visibility.at(
+            list->data(list->index(0), ElementList::ElementRole).toInt())));
+
+        QLocale::setDefault(savedLocale);
+        qunsetenv("KEYSTONE_IFCCONVERT");
+    }
+
     void backendOpensConvertsAndCaches() {
         QTemporaryDir dir;
         write(dir.filePath("wall.ifc"), sampleIfc);
@@ -722,6 +765,24 @@ END-ISO-10303-21;
         qunsetenv("KEYSTONE_IFCCONVERT");
     }
 
+    void cliSendsOnlyModelsToTheWindow() {
+        QTemporaryDir dir;
+        const QString noExtension = dir.filePath("building");
+        write(noExtension, sampleIfc);
+
+        QVERIFY(!isCliCommand("open"));
+        QVERIFY(!isCliCommand("model.ifc"));
+        QVERIFY(!isCliCommand("MODEL.IFC"));
+        QVERIFY(!isCliCommand("file:///tmp/model.ifc"));
+        QVERIFY(!isCliCommand(noExtension.toLocal8Bit().constData()));
+
+        QVERIFY(isCliCommand("info"));
+        QVERIFY(isCliCommand("help"));
+        QVERIFY(isCliCommand("--version"));
+        QVERIFY(isCliCommand("inf"));
+        QVERIFY(isCliCommand("--json"));
+    }
+
     void cliReportsOnAModel() {
         QTemporaryDir dir;
         write(dir.filePath("wall.ifc"), sampleIfc);
@@ -753,6 +814,14 @@ END-ISO-10303-21;
         QVERIFY(missing.out.isEmpty());
         QCOMPARE(capture({"info"}).code, 1);
         QVERIFY(capture({"help"}).out.contains("properties <model.ifc> <GlobalId>"));
+        QCOMPARE(capture({}).code, 0);
+
+        // A typo is an error, not a window that needs a display.
+        Captured typo = capture({"inf", model});
+        QCOMPARE(typo.code, 1);
+        QVERIFY(typo.err.contains("Unknown command inf"));
+        QVERIFY(typo.out.isEmpty());
+        QCOMPARE(capture({"--json"}).code, 1);
         QVERIFY(capture({"skill"}).out.contains("name: keystone"));
     }
 

@@ -48,9 +48,14 @@ Rectangle {
                 horizontalAlignment: Text.AlignLeft
             }
             Label {
-                text: backend.elements.count === backend.elements.total ? backend.elements.total.toLocaleString(Qt.locale(), 'f', 0)
-                    : qsTr("%1 of %2").arg(backend.elements.count.toLocaleString(Qt.locale(), 'f', 0))
-                                     .arg(backend.elements.total.toLocaleString(Qt.locale(), 'f', 0))
+                // The plain count runs no qsTr, so it has to ask for the language
+                // itself to take the new number format on a switch.
+                text: {
+                    translator.language
+                    const total = backend.elements.total.toLocaleString(Qt.locale(), 'f', 0)
+                    return backend.elements.count === backend.elements.total ? total
+                        : qsTr("%1 of %2").arg(backend.elements.count.toLocaleString(Qt.locale(), 'f', 0)).arg(total)
+                }
                 font.pixelSize: 12
                 color: Qt.rgba(1, 1, 1, 0.5)
             }
