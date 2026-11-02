@@ -27,14 +27,14 @@ void printJson(const QJsonValue &value) {
 }
 
 int fail(const QString &message) {
-    fputs(("keystone: " + message + "\n").toUtf8().constData(), stderr);
+    fputs(("gable: " + message + "\n").toUtf8().constData(), stderr);
     return 1;
 }
 
 QString usage() {
-    return "Usage: keystone <command> [options]\n\n"
+    return "Usage: gable <command> [options]\n\n"
            "Commands:\n"
-           "  open [model.ifc]                Open the viewer (also: keystone model.ifc)\n"
+           "  open [model.ifc]                Open the viewer (also: gable model.ifc)\n"
            "  info <model.ifc>                Schema, storeys, and element counts by class\n"
            "  elements <model.ifc>            Every element with its GlobalId, class, name, and storey\n"
            "      --class <IfcClass>          Only this class (IfcWall matches IfcWallStandardCase too)\n"
@@ -228,11 +228,11 @@ int skill(const QStringList &arguments) {
         return 0;
     }
     if (arguments.at(2) != "install")
-        return fail("Use keystone skill to print the skill, or keystone skill install.");
+        return fail("Use gable skill to print the skill, or gable skill install.");
 
     // One copy under ~/.agents, linked into ~/.claude, as Hype installs its own.
     const QDir home = QDir::home();
-    const QString directory = home.filePath(".agents/skills/keystone");
+    const QString directory = home.filePath(".agents/skills/gable");
     if (!QDir().mkpath(directory))
         return fail("Could not create " + directory);
     // Written beside the old copy and renamed over it, so a failure leaves
@@ -240,12 +240,12 @@ int skill(const QStringList &arguments) {
     QSaveFile target(directory + "/SKILL.md");
     if (!target.open(QIODevice::WriteOnly) || target.write(text) != text.size() || !target.commit())
         return fail("Could not write " + target.fileName());
-    const QString link = home.filePath(".claude/skills/keystone");
+    const QString link = home.filePath(".claude/skills/gable");
     if (!QFileInfo(link).exists() && !QFileInfo(link).isSymLink()) {
-        if (!home.mkpath(".claude/skills") || !QFile::link("../../.agents/skills/keystone", link))
+        if (!home.mkpath(".claude/skills") || !QFile::link("../../.agents/skills/gable", link))
             return fail("Could not link " + link);
     }
-    print("Installed the Keystone skill in " + directory + " and linked it into ~/.claude/skills.\n");
+    print("Installed the Gable skill in " + directory + " and linked it into ~/.claude/skills.\n");
     return 0;
 }
 
@@ -261,7 +261,7 @@ bool isCliCommand(const char *word) {
 int runCli(const QStringList &arguments) {
     const QString command = arguments.value(1);
     if (command == "--version" || command == "-v") {
-        print("keystone " + QCoreApplication::applicationVersion() + "\n");
+        print("gable " + QCoreApplication::applicationVersion() + "\n");
         return 0;
     }
     if (command == "info")
@@ -276,5 +276,5 @@ int runCli(const QStringList &arguments) {
         print(usage());
         return 0;
     }
-    return fail(QString("Unknown command %1. Run keystone help to see the commands.").arg(command));
+    return fail(QString("Unknown command %1. Run gable help to see the commands.").arg(command));
 }

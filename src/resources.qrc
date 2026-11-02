@@ -11,7 +11,7 @@
         <file alias="ElementsPanel.qml">ElementsPanel.qml</file>
         <file alias="ViewToolbar.qml">ViewToolbar.qml</file>
         <file alias="ifcnames.txt">ifcnames.txt</file>
-        <file alias="keystone.svg">../pkgbuild/keystone.svg</file>
+        <file alias="gable.svg">../pkgbuild/gable.svg</file>
         <file alias="i18n/ar.json">i18n/ar.json</file>
         <file alias="i18n/bg.json">i18n/bg.json</file>
         <file alias="i18n/bn.json">i18n/bn.json</file>

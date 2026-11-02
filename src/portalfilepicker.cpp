@@ -88,7 +88,7 @@ PortalFileFilters ifcFilters() {
 }
 
 QString portalToken() {
-    return QStringLiteral("keystone_%1").arg(QRandomGenerator::global()->generate());
+    return QStringLiteral("gable_%1").arg(QRandomGenerator::global()->generate());
 }
 
 QByteArray portalPathBytes(const QString &path) {

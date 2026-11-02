@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick3D
-import Keystone
+import Gable
 
 // The model in 3D: orbit with the left button, pan with the right or middle
 // button (or Shift and the left), zoom with the wheel towards what's under

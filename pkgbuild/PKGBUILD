@@ -1,13 +1,13 @@
-pkgname=keystone
+pkgname=gable
 pkgver=0.1.0
 pkgrel=1
 _ifcconvert=0.9.0post1
 pkgdesc='Fast native 3D viewer for IFC building models'
 arch=('x86_64' 'aarch64')
-url='https://github.com/yamz8/keystone'
-# Keystone is MIT; the bundled IfcConvert (IfcOpenShell) is LGPL-3.0-or-later.
+url='https://github.com/yamz8/gable'
+# Gable is MIT; the bundled IfcConvert (IfcOpenShell) is LGPL-3.0-or-later.
 license=('MIT' 'LGPL-3.0-or-later')
-install='keystone.install'
+install='gable.install'
 depends=('hicolor-icon-theme' 'qt6-base' 'qt6-declarative' 'qt6-quick3d' 'qt6-svg' 'qt6-wayland' 'shared-mime-info' 'xdg-desktop-portal')
 makedepends=('gcc' 'make')
 # IfcConvert ships stripped, with its own libraries beside it; leave them as
@@ -25,17 +25,17 @@ build() {
 
 package() {
   cd "$startdir/.."
-  install -Dm755 build/keystone "$pkgdir/usr/bin/keystone"
+  install -Dm755 build/gable "$pkgdir/usr/bin/gable"
   install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
-  install -Dm644 "$startdir/keystone.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/keystone.svg"
-  install -Dm644 "$startdir/keystone.desktop" "$pkgdir/usr/share/applications/keystone.desktop"
-  install -Dm644 "$startdir/keystone-mime.xml" "$pkgdir/usr/share/mime/packages/keystone.xml"
+  install -Dm644 "$startdir/gable.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/gable.svg"
+  install -Dm644 "$startdir/gable.desktop" "$pkgdir/usr/share/applications/gable.desktop"
+  install -Dm644 "$startdir/gable-mime.xml" "$pkgdir/usr/share/mime/packages/gable.xml"
   install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
 
   # IfcConvert finds its libraries and plugins beside itself.
-  install -dm755 "$pkgdir/usr/lib/keystone/ifcconvert"
+  install -dm755 "$pkgdir/usr/lib/gable/ifcconvert"
   cd "$srcdir"
   for file in IfcConvert *.so *.so.*; do
-    install -m755 "$file" "$pkgdir/usr/lib/keystone/ifcconvert/$file"
+    install -m755 "$file" "$pkgdir/usr/lib/gable/ifcconvert/$file"
   done
 }

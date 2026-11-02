@@ -1,6 +1,6 @@
 QT += core gui quick quickcontrols2 quick3d testlib dbus concurrent
 CONFIG += c++17 testcase
-TARGET = keystone_tests
+TARGET = gable_tests
 TEMPLATE = app
 
 INCLUDEPATH += ../src
@@ -19,7 +19,7 @@ HEADERS += \
     ../src/translator.h
 
 SOURCES += \
-    keystone_tests.cpp \
+    gable_tests.cpp \
     ../src/backend.cpp \
     ../src/cli.cpp \
     ../src/elementlist.cpp \

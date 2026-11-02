@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Keystone
+Name=Gable
 Comment=View IFC building models in 3D
 Comment[ar]=عرض نماذج مباني IFC بالأبعاد الثلاثية
 Comment[bg]=Разглеждане на IFC модели на сгради в 3D
@@ -51,10 +51,10 @@ Comment[uz]=IFC bino modellarini 3D formatda koʻrish
 Comment[vi]=Xem mô hình công trình IFC ở dạng 3D
 Comment[zh_CN]=以 3D 方式查看 IFC 建筑模型
 Comment[zh_TW]=以 3D 檢視 IFC 建築模型
-Exec=keystone open %f
-Icon=keystone
+Exec=gable open %f
+Icon=gable
 Terminal=false
 Categories=Graphics;3DGraphics;Viewer;Engineering;
 MimeType=application/x-ifc;
 Keywords=IFC;BIM;building;architecture;3D;model;viewer;
-StartupWMClass=keystone
+StartupWMClass=gable

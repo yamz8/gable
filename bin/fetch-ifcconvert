@@ -1,7 +1,7 @@
 #!/bin/sh
 # Downloads IfcOpenShell's IfcConvert into vendor/ifcconvert, where a
-# development build of Keystone looks for it. The package bundles the same
-# release under /usr/lib/keystone/ifcconvert.
+# development build of Gable looks for it. The package bundles the same
+# release under /usr/lib/gable/ifcconvert.
 set -eu
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"

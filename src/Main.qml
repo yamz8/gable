@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
-import Keystone
+import Gable
 
 ApplicationWindow {
     id: win
@@ -11,7 +11,7 @@ ApplicationWindow {
     minimumWidth: 720
     minimumHeight: 480
     visible: true
-    title: backend.state === Backend.Ready && backend.fileName ? qsTr("%1 — Keystone").arg(backend.fileName) : "Keystone"
+    title: backend.state === Backend.Ready && backend.fileName ? qsTr("%1 — Gable").arg(backend.fileName) : "Gable"
     // The theme's own background when it's a dark theme; the chrome is dark
     // Material either way, so a light theme keeps a dark window around the
     // light viewport.
@@ -112,7 +112,7 @@ ApplicationWindow {
 
             Image {
                 Layout.alignment: Qt.AlignHCenter
-                source: "qrc:/keystone.svg"
+                source: "qrc:/gable.svg"
                 sourceSize: Qt.size(72, 72)
                 opacity: win.busy ? 0.5 : 0.9
             }
