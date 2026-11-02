@@ -13,7 +13,7 @@
 Loader::Loader(const QString &cacheDirectory, QObject *parent)
     : QObject(parent),
       m_cacheDirectory(!cacheDirectory.isEmpty() ? cacheDirectory
-                       : QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/keystone/models") {
+                       : QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/gable/models") {
     m_process.setProcessChannelMode(QProcess::MergedChannels);
     connect(&m_process, &QProcess::readyRead, this, [this] {
         const QByteArray chunk = m_process.readAll();
@@ -39,14 +39,14 @@ Loader::~Loader() {
 }
 
 QString Loader::findIfcConvert() {
-    const QString fromEnvironment = qEnvironmentVariable("KEYSTONE_IFCCONVERT");
+    const QString fromEnvironment = qEnvironmentVariable("GABLE_IFCCONVERT");
     if (!fromEnvironment.isEmpty())
         return QFileInfo(fromEnvironment).isExecutable() ? fromEnvironment : QString();
     const QString here = QCoreApplication::applicationDirPath();
-    for (const QString &candidate : {here + "/../lib/keystone/ifcconvert/IfcConvert",
+    for (const QString &candidate : {here + "/../lib/gable/ifcconvert/IfcConvert",
                                      here + "/../vendor/ifcconvert/IfcConvert",
                                      here + "/../../vendor/ifcconvert/IfcConvert",
-                                     QStringLiteral("/usr/lib/keystone/ifcconvert/IfcConvert")}) {
+                                     QStringLiteral("/usr/lib/gable/ifcconvert/IfcConvert")}) {
         if (QFileInfo(candidate).isExecutable())
             return QFileInfo(candidate).canonicalFilePath();
     }
@@ -91,7 +91,7 @@ QString Loader::cacheKey(const QString &path, const QString &ifcConvert) const {
     // after a change to how models are converted.
     const QFileInfo model(path), tool(ifcConvert);
     QCryptographicHash hash(QCryptographicHash::Sha1);
-    hash.addData(QByteArrayLiteral("keystone-obj-1\n"));
+    hash.addData(QByteArrayLiteral("gable-obj-1\n"));
     hash.addData(model.absoluteFilePath().toUtf8());
     hash.addData(QByteArray::number(model.size()));
     hash.addData(QByteArray::number(model.lastModified().toMSecsSinceEpoch()));
@@ -145,8 +145,8 @@ void Loader::start(const QString &path) {
 
     const QString ifcConvert = findIfcConvert();
     if (ifcConvert.isEmpty()) {
-        fail(tr("Keystone needs IfcConvert from IfcOpenShell to read IFC geometry, and it isn't installed. "
-                "Reinstall Keystone, or point KEYSTONE_IFCCONVERT at an IfcConvert binary."));
+        fail(tr("Gable needs IfcConvert from IfcOpenShell to read IFC geometry, and it isn't installed. "
+                "Reinstall Gable, or point GABLE_IFCCONVERT at an IfcConvert binary."));
         return;
     }
     m_infoWatcher.disconnect(this);

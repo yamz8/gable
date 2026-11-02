@@ -1,4 +1,4 @@
-// Keystone — a fast native 3D viewer for IFC building models.
+// Gable — a fast native 3D viewer for IFC building models.
 
 #include <QDir>
 #include <QGuiApplication>
@@ -15,25 +15,25 @@
 #include "translator.h"
 
 int main(int argc, char *argv[]) {
-    // Commands draw no window, so they need no display: bare keystone prints
-    // help, as a command line tool should, and the launcher says keystone open.
+    // Commands draw no window, so they need no display: bare gable prints
+    // help, as a command line tool should, and the launcher says gable open.
     // Anything that isn't a model counts as a command, so a typo gets an error
     // rather than a window.
     if (argc == 1 || isCliCommand(argv[1])) {
         QCoreApplication app(argc, argv);
-        app.setApplicationName("keystone");
+        app.setApplicationName("gable");
         app.setApplicationVersion("0.1.0");
         return runCli(app.arguments());
     }
 
     QGuiApplication app(argc, argv);
-    app.setApplicationName("keystone");
+    app.setApplicationName("gable");
     app.setApplicationVersion("0.1.0");
 
-    // Matches the window to keystone.desktop, so the compositor (Wayland
+    // Matches the window to gable.desktop, so the compositor (Wayland
     // app_id) and the launcher pick up the installed icon.
-    app.setDesktopFileName("keystone");
-    app.setWindowIcon(QIcon::fromTheme("keystone"));
+    app.setDesktopFileName("gable");
+    app.setWindowIcon(QIcon::fromTheme("gable"));
 
     QQuickStyle::setStyle("Material");
 
@@ -46,8 +46,8 @@ int main(int argc, char *argv[]) {
     Backend backend;
     QObject::connect(&translator, &Translator::changed, &backend, &Backend::retranslate);
 
-    qmlRegisterType<MeshGeometry>("Keystone", 1, 0, "MeshGeometry");
-    qmlRegisterUncreatableType<Backend>("Keystone", 1, 0, "Backend", "Backend is provided as `backend`");
+    qmlRegisterType<MeshGeometry>("Gable", 1, 0, "MeshGeometry");
+    qmlRegisterUncreatableType<Backend>("Gable", 1, 0, "Backend", "Backend is provided as `backend`");
 
     QQmlApplicationEngine engine;
     QObject::connect(&translator, &Translator::changed, &engine, &QQmlEngine::retranslate);
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
     if (engine.rootObjects().isEmpty())
         return 1;
 
-    // `keystone open model.ifc` (the launcher's form) and `keystone model.ifc`
+    // `gable open model.ifc` (the launcher's form) and `gable model.ifc`
     // open it straight away.
     QStringList arguments = app.arguments().mid(1);
     if (arguments.value(0) == "open")

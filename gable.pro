@@ -1,7 +1,7 @@
 QT += core gui qml quick quickcontrols2 quick3d svg dbus concurrent
 
 CONFIG += c++17 release
-TARGET = keystone
+TARGET = gable
 TEMPLATE = app
 
 HEADERS += \

@@ -85,7 +85,7 @@ bool Backend::openUrl(const QUrl &url) {
     // Only local files: a remote or network-share URL would reach IfcConvert
     // as something other than the file the user meant.
     if (!url.isLocalFile() || url.toLocalFile().startsWith("//")) {
-        reject(url.toString(), tr("Keystone opens files on this computer only."));
+        reject(url.toString(), tr("Gable opens files on this computer only."));
         return false;
     }
     return openPath(url.toLocalFile());

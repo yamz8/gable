@@ -1,15 +1,15 @@
 # Maintainer: Yam
 
-pkgname=keystone
+pkgname=gable
 pkgver=0.1.0
 pkgrel=1
 _ifcconvert=0.9.0post1
 pkgdesc='Fast native 3D viewer for IFC building models'
 arch=('x86_64' 'aarch64')
-url='https://github.com/yamz8/keystone'
-# Keystone is MIT; the bundled IfcConvert (IfcOpenShell) is LGPL-3.0-or-later.
+url='https://github.com/yamz8/gable'
+# Gable is MIT; the bundled IfcConvert (IfcOpenShell) is LGPL-3.0-or-later.
 license=('MIT' 'LGPL-3.0-or-later')
-install='keystone.install'
+install='gable.install'
 # IfcConvert ships stripped, with its own libraries beside it; leave them as
 # IfcOpenShell built them.
 options=('!strip' '!debug')
@@ -27,7 +27,7 @@ makedepends=(
   'gcc'
   'make'
 )
-source=("$pkgname-$pkgver.tar.gz::https://github.com/yamz8/keystone/archive/refs/tags/v$pkgver.tar.gz")
+source=("$pkgname-$pkgver.tar.gz::https://github.com/yamz8/gable/archive/refs/tags/v$pkgver.tar.gz")
 source_x86_64=("https://github.com/IfcOpenShell/IfcOpenShell/releases/download/ifcconvert-$_ifcconvert/ifcconvert-$_ifcconvert-linux64.zip")
 source_aarch64=("https://github.com/IfcOpenShell/IfcOpenShell/releases/download/ifcconvert-$_ifcconvert/ifcconvert-$_ifcconvert-linuxarm64.zip")
 sha256sums=('d47f6b1ebc8b5e5780f57c7371090d8c39137dd95f6d278181e5890985f5c4d5')
@@ -41,17 +41,17 @@ build() {
 
 package() {
   cd "$srcdir/$pkgname-$pkgver"
-  install -Dm755 build/keystone "$pkgdir/usr/bin/keystone"
+  install -Dm755 build/gable "$pkgdir/usr/bin/gable"
   install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
-  install -Dm644 pkgbuild/keystone.svg "$pkgdir/usr/share/icons/hicolor/scalable/apps/keystone.svg"
-  install -Dm644 pkgbuild/keystone.desktop "$pkgdir/usr/share/applications/keystone.desktop"
-  install -Dm644 pkgbuild/keystone-mime.xml "$pkgdir/usr/share/mime/packages/keystone.xml"
+  install -Dm644 pkgbuild/gable.svg "$pkgdir/usr/share/icons/hicolor/scalable/apps/gable.svg"
+  install -Dm644 pkgbuild/gable.desktop "$pkgdir/usr/share/applications/gable.desktop"
+  install -Dm644 pkgbuild/gable-mime.xml "$pkgdir/usr/share/mime/packages/gable.xml"
   install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
 
   # IfcConvert finds its libraries and plugins beside itself.
-  install -dm755 "$pkgdir/usr/lib/keystone/ifcconvert"
+  install -dm755 "$pkgdir/usr/lib/gable/ifcconvert"
   cd "$srcdir"
   for file in IfcConvert *.so *.so.*; do
-    install -m755 "$file" "$pkgdir/usr/lib/keystone/ifcconvert/$file"
+    install -m755 "$file" "$pkgdir/usr/lib/gable/ifcconvert/$file"
   done
 }

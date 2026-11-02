@@ -28,11 +28,11 @@ public:
         QString warning;
     };
 
-    // The cache defaults to ~/.cache/keystone/models; tests pass their own.
+    // The cache defaults to ~/.cache/gable/models; tests pass their own.
     explicit Loader(const QString &cacheDirectory = {}, QObject *parent = nullptr);
     ~Loader() override;
 
-    // IfcConvert from $KEYSTONE_IFCCONVERT, beside the installed binary, the
+    // IfcConvert from $GABLE_IFCCONVERT, beside the installed binary, the
     // development vendor/ directory, or PATH; empty when there is none.
     static QString findIfcConvert();
     // The IfcConvert arguments for one conversion, for tests and the README.

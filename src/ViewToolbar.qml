@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
-import Keystone
+import Gable
 
 // What of the building is shown: the storey slider that peels floors away,
 // X-ray by discipline, and the section plane.

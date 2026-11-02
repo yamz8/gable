@@ -127,7 +127,7 @@ Captured capture(const QStringList &arguments) {
     Q_UNUSED(out);
     Q_UNUSED(err);
     Captured result;
-    result.code = runCli(QStringList{"keystone"} + arguments);
+    result.code = runCli(QStringList{"gable"} + arguments);
     fflush(stdout);
     fflush(stderr);
     dup2(savedOut, fileno(stdout));
@@ -151,7 +151,7 @@ public:
 
 }
 
-class KeystoneTests : public QObject {
+class GableTests : public QObject {
     Q_OBJECT
 
 private slots:
@@ -556,12 +556,12 @@ END-ISO-10303-21;
     void loaderSaysWhenIfcConvertIsMissing() {
         QTemporaryDir dir;
         write(dir.filePath("wall.ifc"), sampleIfc);
-        qputenv("KEYSTONE_IFCCONVERT", dir.filePath("missing").toUtf8());
+        qputenv("GABLE_IFCCONVERT", dir.filePath("missing").toUtf8());
         Backend backend(new FakePicker(), dir.filePath("cache"));
         QVERIFY(backend.openPath(dir.filePath("wall.ifc")));
         QTRY_COMPARE(backend.state(), Backend::Failed);
         QVERIFY(backend.errorMessage().contains("IfcConvert"));
-        qunsetenv("KEYSTONE_IFCCONVERT");
+        qunsetenv("GABLE_IFCCONVERT");
     }
 
     void backendFollowsALanguageSwitch() {
@@ -570,7 +570,7 @@ END-ISO-10303-21;
         const QString fake = writeFakeIfcConvert(dir);
         // One element IFC says nothing about, so it's in no storey.
         write(dir.filePath("fixture.obj"), cubeObj("model.mtl") + "g 1NotInTheModel000000000\nusemtl grey\nf 1 2 3\n");
-        qputenv("KEYSTONE_IFCCONVERT", fake.toUtf8());
+        qputenv("GABLE_IFCCONVERT", fake.toUtf8());
         write(dir.filePath("language"), "en");
         write(dir.filePath("de.json"), R"({"Not in a storey": "Keinem Geschoss zugeordnet"})");
 
@@ -604,14 +604,14 @@ END-ISO-10303-21;
             list->data(list->index(0), ElementList::ElementRole).toInt())));
 
         QLocale::setDefault(savedLocale);
-        qunsetenv("KEYSTONE_IFCCONVERT");
+        qunsetenv("GABLE_IFCCONVERT");
     }
 
     void backendOpensConvertsAndCaches() {
         QTemporaryDir dir;
         write(dir.filePath("wall.ifc"), sampleIfc);
         const QString fake = writeFakeIfcConvert(dir);
-        qputenv("KEYSTONE_IFCCONVERT", fake.toUtf8());
+        qputenv("GABLE_IFCCONVERT", fake.toUtf8());
 
         auto *picker = new FakePicker();
         picker->next = QUrl::fromLocalFile(dir.filePath("wall.ifc"));
@@ -649,17 +649,17 @@ END-ISO-10303-21;
         QVERIFY(runs.open(QIODevice::ReadOnly));
         QCOMPARE(runs.readAll().count('\n'), 1);
         QCOMPARE(backend.selectedElement(), -1);
-        qunsetenv("KEYSTONE_IFCCONVERT");
+        qunsetenv("GABLE_IFCCONVERT");
     }
 
     void backendPeelsStoreysXraysAndCuts() {
         QTemporaryDir dir;
         write(dir.filePath("wall.ifc"), sampleIfc);
-        qputenv("KEYSTONE_IFCCONVERT", writeFakeIfcConvert(dir).toUtf8());
+        qputenv("GABLE_IFCCONVERT", writeFakeIfcConvert(dir).toUtf8());
         Backend backend(new FakePicker(), dir.filePath("cache"));
         QVERIFY(backend.openPath(dir.filePath("wall.ifc")));
         QTRY_COMPARE(backend.state(), Backend::Ready);
-        qunsetenv("KEYSTONE_IFCCONVERT");
+        qunsetenv("GABLE_IFCCONVERT");
         QCOMPARE(backend.storeys(), (QStringList{"Ground floor", "First floor"}));
         QCOMPARE(backend.storeyLimit(), 2);
         QCOMPARE(backend.shownCount(), 2);
@@ -727,7 +727,7 @@ END-ISO-10303-21;
         // first alone: still loading, and named right once it's done.
         QTemporaryDir dir;
         write(dir.filePath("wall.ifc"), sampleIfc);
-        qputenv("KEYSTONE_IFCCONVERT", writeFakeIfcConvert(dir, 0.5).toUtf8());
+        qputenv("GABLE_IFCCONVERT", writeFakeIfcConvert(dir, 0.5).toUtf8());
         Backend backend(new FakePicker(), dir.filePath("cache"));
         QSignalSpy notices(&backend, &Backend::notice);
         QVERIFY(backend.openPath(dir.filePath("wall.ifc")));
@@ -739,7 +739,7 @@ END-ISO-10303-21;
         QTRY_COMPARE_WITH_TIMEOUT(backend.state(), Backend::Ready, 10000);
         QCOMPARE(backend.fileName(), QString("wall.ifc"));
         QCOMPARE(backend.filePath(), dir.filePath("wall.ifc"));
-        qunsetenv("KEYSTONE_IFCCONVERT");
+        qunsetenv("GABLE_IFCCONVERT");
     }
 
     void loaderDropsACancelledLoad() {
@@ -748,7 +748,7 @@ END-ISO-10303-21;
         QTemporaryDir dir;
         write(dir.filePath("a.ifc"), sampleIfc);
         write(dir.filePath("b.ifc"), sampleIfc + "\n");
-        qputenv("KEYSTONE_IFCCONVERT", writeFakeIfcConvert(dir, 0.3).toUtf8());
+        qputenv("GABLE_IFCCONVERT", writeFakeIfcConvert(dir, 0.3).toUtf8());
         Loader loader(dir.filePath("cache"));
         QSignalSpy finished(&loader, &Loader::finished);
         QSignalSpy failed(&loader, &Loader::failed);
@@ -762,7 +762,7 @@ END-ISO-10303-21;
         QCOMPARE(finished.count(), 1);
         QCOMPARE(failed.count(), 0);
         QCOMPARE(finished.at(0).at(0).value<Loader::Result>().path, dir.filePath("b.ifc"));
-        qunsetenv("KEYSTONE_IFCCONVERT");
+        qunsetenv("GABLE_IFCCONVERT");
     }
 
     void cliSendsOnlyModelsToTheWindow() {
@@ -822,12 +822,12 @@ END-ISO-10303-21;
         QVERIFY(typo.err.contains("Unknown command inf"));
         QVERIFY(typo.out.isEmpty());
         QCOMPARE(capture({"--json"}).code, 1);
-        QVERIFY(capture({"skill"}).out.contains("name: keystone"));
+        QVERIFY(capture({"skill"}).out.contains("name: gable"));
     }
 
     void loaderKeepsTheCacheSmall() {
         QTemporaryDir dir;
-        qputenv("KEYSTONE_IFCCONVERT", writeFakeIfcConvert(dir).toUtf8());
+        qputenv("GABLE_IFCCONVERT", writeFakeIfcConvert(dir).toUtf8());
         const QString cache = dir.filePath("cache");
         auto entries = [&cache] { return QDir(cache).entryList(QDir::Dirs | QDir::NoDotAndDotDot).size(); };
         Loader loader(cache);
@@ -847,7 +847,7 @@ END-ISO-10303-21;
         loader.start(dir.filePath("m3.ifc"));
         QTRY_COMPARE(finished.count(), 1);
         QCOMPARE(entries(), 1);
-        qunsetenv("KEYSTONE_IFCCONVERT");
+        qunsetenv("GABLE_IFCCONVERT");
     }
 
     void backendRefusesWhatItCantOpen() {
@@ -861,5 +861,5 @@ END-ISO-10303-21;
     }
 };
 
-QTEST_MAIN(KeystoneTests)
-#include "keystone_tests.moc"
+QTEST_MAIN(GableTests)
+#include "gable_tests.moc"

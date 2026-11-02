@@ -1,10 +1,10 @@
-# Keystone
+# Gable
 
-[![Test](https://github.com/yamz8/keystone/actions/workflows/test.yml/badge.svg)](https://github.com/yamz8/keystone/actions/workflows/test.yml)
+[![Test](https://github.com/yamz8/gable/actions/workflows/test.yml/badge.svg)](https://github.com/yamz8/gable/actions/workflows/test.yml)
 
 A fast native 3D viewer for IFC building models, for the Omarchy desktop.
 
-![Keystone showing the Schependomlaan model with a wall selected](docs/screenshot.png)
+![Gable showing the Schependomlaan model with a wall selected](docs/screenshot.png)
 
 Open an `.ifc` file, orbit around the building, and click any element to see
 what it is: its class, type, storey, materials, area, volume, and every
@@ -19,7 +19,7 @@ work.
 - **Elements**: every element listed under its storey, searchable by name,
   class, storey, or GlobalId.
 
-Keystone follows Omarchy: the viewport sits on your theme's background, the
+Gable follows Omarchy: the viewport sits on your theme's background, the
 selection takes the theme's accent, corners follow Hyprland's rounding, and
 the window speaks the language picked under Setup > Language.
 
@@ -57,29 +57,29 @@ The same reading of a model works without a window, for scripts and coding
 agents. Each command takes `--json`, exits 0 or 1, and never changes the file.
 
 ```sh
-keystone info model.ifc                    # schema, storeys, element counts by class
-keystone elements model.ifc --class IfcDoor  # GlobalId, class, name, and storey of each
-keystone properties model.ifc 2R6F$WfUj7CApH6kaihZst
-keystone skill install                     # teach Claude Code and other agents to use these
-keystone open model.ifc                    # the viewer (keystone model.ifc works too)
+gable info model.ifc                      # schema, storeys, element counts by class
+gable elements model.ifc --class IfcDoor  # GlobalId, class, name, and storey of each
+gable properties model.ifc 2R6F$WfUj7CApH6kaihZst
+gable skill install                       # teach Claude Code and other agents to use these
+gable open model.ifc                      # the viewer (gable model.ifc works too)
 ```
 
 ## How it works
 
 [IfcOpenShell](https://ifcopenshell.org)'s `IfcConvert` triangulates the
 model into a Wavefront OBJ with one group per element, named by its GlobalId.
-Keystone runs it in the background, reads the OBJ, and draws the model with
+Gable runs it in the background, reads the OBJ, and draws the model with
 Qt Quick 3D, one draw call per material. Openings, spaces, and spatial zones
 are left out, as they are volumes rather than things.
 
-Properties come from the IFC file itself: Keystone indexes the STEP text once
+Properties come from the IFC file itself: Gable indexes the STEP text once
 and reads an element's attributes, relationships, property sets, quantities,
 and units when you select it. (IfcConvert's own XML export crashes on some
 IFC2x3 files, which is most of what's out there.) When a file carries no area
-or volume for an element, Keystone measures them from its geometry and says so.
+or volume for an element, Gable measures them from its geometry and says so.
 
 Triangulating is most of the wait on a real building, so the converted
-geometry is kept in `~/.cache/keystone/models`, keyed by the file's path,
+geometry is kept in `~/.cache/gable/models`, keyed by the file's path,
 size, and time, for the twelve most recently opened models and up to 2 GB.
 Your `.ifc` files are only ever read. On four cores:
 
@@ -94,23 +94,23 @@ storey slider, X-ray, and sections redraw without re-reading anything.
 
 ## Building
 
-Keystone is C++17 and Qt Quick, built with qmake6 and make into one binary.
+Gable is C++17 and Qt Quick, built with qmake6 and make into one binary.
 
 ```sh
 bin/fetch-ifcconvert   # IfcConvert 0.9.0 into vendor/, once
-bin/build              # build/keystone
+bin/build              # build/gable
 bin/test               # the Qt Test suite, offscreen
 bin/install            # makepkg -fsi: installs it so it shows up in the launcher
 ```
 
-`build/keystone open model.ifc` opens a model straight away. Set
-`KEYSTONE_IFCCONVERT` to use a different IfcConvert. GitHub Actions builds
+`build/gable open model.ifc` opens a model straight away. Set
+`GABLE_IFCCONVERT` to use a different IfcConvert. GitHub Actions builds
 and tests every push on Arch Linux.
 
-The package bundles IfcConvert under `/usr/lib/keystone/ifcconvert` and
+The package bundles IfcConvert under `/usr/lib/gable/ifcconvert` and
 registers `application/x-ifc` for `.ifc` files.
 
 ## License
 
-MIT for Keystone; see [LICENSE](LICENSE). The bundled IfcConvert is
+MIT for Gable; see [LICENSE](LICENSE). The bundled IfcConvert is
 IfcOpenShell's, under the LGPL 3.0 or later.
