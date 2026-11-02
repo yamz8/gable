@@ -23,6 +23,19 @@ Gable follows Omarchy: the viewport sits on your theme's background, the
 selection takes the theme's accent, corners follow Hyprland's rounding, and
 the window speaks the language picked under Setup > Language.
 
+## Install
+
+On Omarchy, or any Arch Linux, build the release package and install it:
+
+```sh
+mkdir gable && cd gable
+curl -LO https://raw.githubusercontent.com/yamz8/gable/main/pkgbuild/omarchy-pkgs/PKGBUILD
+curl -LO https://raw.githubusercontent.com/yamz8/gable/main/pkgbuild/omarchy-pkgs/gable.install
+makepkg -si
+```
+
+Gable then shows up in the app launcher, and `.ifc` files open in it.
+
 ## Shortcuts
 
 | Key | Action |
